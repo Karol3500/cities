@@ -1,12 +1,10 @@
 # About
-Simple hello world application utilizing Docker, Spring and Maven. 
+Simple hello world application utilizing Docker, Spring and Maven.
 # Building and running
-To build application go into **app** directory and run:
+Application can be built and run on Linux using convenient script:
 ```
-mvn install dockerfile:build
+./run.sh
 ```
-To start application run:
-```
-docker run -p 8080:8080 -t springio/cities:latest
-```
-and type in a web browser **localhost:8080/hello**.
+The script builds and runs docker image containing application.
+#Testing
+Opening **localhost:8080/hello** in a web browser should open a page with **Hello Docker World** message.

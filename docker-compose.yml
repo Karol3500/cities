@@ -1,0 +1,9 @@
+version: '3'
+
+services:
+
+  cities:
+    image: springio/cities:latest
+    ports:
+      - "8080:8080"
+    container_name: cities_app
