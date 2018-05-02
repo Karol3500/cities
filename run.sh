@@ -1,2 +1,2 @@
 #!/bin/bash
-mvn install dockerfile:build && docker-compose up -d
+mvn clean install dockerfile:build && docker-compose up -d

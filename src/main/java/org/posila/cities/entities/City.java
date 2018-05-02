@@ -1,8 +1,9 @@
 package org.posila.cities.entities;
 
-import org.springframework.data.annotation.Id;
+import javax.persistence.Id;
 
 public class City {
+
     @Id
     public String id;
     public String name;
