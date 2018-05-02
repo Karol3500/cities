@@ -1,3 +1,2 @@
 #!/bin/bash
-mvn -f app/ install dockerfile:build
-docker-compose up -d
+mvn install dockerfile:build && docker-compose up -d

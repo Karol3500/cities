@@ -7,3 +7,14 @@ services:
     ports:
       - "8080:8080"
     container_name: cities_app
+    restart: on-failure
+    depends_on:
+      - cities_db
+
+  cities_db:
+    image: mongo:3.7.7
+    container_name: cities_db
+    expose:
+      - 27017
+    volumes:
+      - ./db:/data/db
