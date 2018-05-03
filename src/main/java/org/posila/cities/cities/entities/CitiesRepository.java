@@ -1,4 +1,4 @@
-package org.posila.cities.entities;
+package org.posila.cities.cities.entities;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
 

@@ -1,7 +1,7 @@
 package org.posila.cities.cities;
 
-import org.posila.cities.entities.CitiesRepository;
-import org.posila.cities.entities.City;
+import org.posila.cities.cities.entities.CitiesRepository;
+import org.posila.cities.cities.entities.City;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,7 +18,7 @@ public class CitiesController {
 
         initCleanRepo();
         for (City city : repository.findAll()) {
-            sb.append(city);
+            sb.append(city.toString());
             sb.append("\n");
         }
         return sb.toString();

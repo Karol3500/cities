@@ -1,4 +1,4 @@
-package org.posila.cities.entities;
+package org.posila.cities.cities.entities;
 
 import javax.persistence.Id;
 
@@ -16,8 +16,6 @@ public class City {
         this.name = name;
     }
     public String toString() {
-        return String.format(
-                "City[id=%s, name='%s']",
-                id, name);
+        return String.format("City[name='%s']", name);
     }
 }
