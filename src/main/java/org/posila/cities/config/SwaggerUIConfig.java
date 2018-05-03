@@ -1,5 +1,6 @@
 package org.posila.cities.config;
 
+import org.posila.cities.CitiesApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import springfox.documentation.builders.PathSelectors;
@@ -15,7 +16,7 @@ public class SwaggerUIConfig {
     @Bean
     public Docket productApi() {
         return new Docket(DocumentationType.SWAGGER_2).select()
-                .apis(RequestHandlerSelectors.basePackage("org.posila.cities"))
+                .apis(RequestHandlerSelectors.basePackage(CitiesApplication.class.getPackage().getName()))
                 .paths(PathSelectors.any())
                 .build();
     }
