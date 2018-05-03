@@ -10,4 +10,4 @@ The script builds and runs docker image containing application.
 To check if the application got started, go to <a href="http://localhost:8080/hello">localhost:8080/hello</a>. This should open a page with **Hello Docker World** message.
 
 # Using application
-One way of using application is to use Swagger UI to interact with its web service methods. To open Swagger UI, go to <a href="http://localost:8080/swagger-ui.html">localost:8080/swagger-ui.html</a>.
+One way of using application is to use Swagger UI to interact with its web service methods. To open Swagger UI, go to <a href="http://localhost:8080/swagger-ui.html">localhost:8080/swagger-ui.html</a>.

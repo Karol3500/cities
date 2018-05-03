@@ -1,21 +1,20 @@
 package org.posila.cities.cities.entities;
 
-import javax.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class City {
+import java.io.Serializable;
 
-    @Id
-    public String id;
-    public String name;
+public class City implements Serializable{
 
-    public City(){
-
-    }
+    @JsonProperty
+    private String name;
 
     public City(String name){
         this.name = name;
     }
-    public String toString() {
-        return String.format("City[name='%s']", name);
+
+    @JsonProperty
+    public String getName() {
+        return name;
     }
 }

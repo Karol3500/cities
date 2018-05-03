@@ -1,34 +1,29 @@
 package org.posila.cities.cities;
 
-import org.posila.cities.cities.entities.CitiesRepository;
-import org.posila.cities.cities.entities.City;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.posila.cities.cities.entities.ContinentsWrapper;
+import org.posila.cities.cities.entities.Repository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+
 @RestController
+@RequestMapping("/cities")
 public class CitiesController {
 
-    @Autowired
-    CitiesRepository repository;
+    private Repository repository;
 
-    @RequestMapping(value = "/cities", method = RequestMethod.GET)
-    public String printAllCities() {
-        StringBuilder sb = new StringBuilder();
-
-        initRepo();
-        for (City city : repository.findAll()) {
-            sb.append(city.toString());
-            sb.append("\n");
-        }
-        return sb.toString();
+    @RequestMapping(value = "/getAll", method = RequestMethod.GET,
+            produces = "application/json")
+    public String printAll() throws JsonProcessingException {
+        return new ObjectMapper().writeValueAsString(new ContinentsWrapper(repository.findAll()));
     }
 
-    private void initRepo() {
-        repository.deleteAll();
-        // save a couple of cities
-        repository.save(new City("Wroclaw"));
-        repository.save(new City("New York"));
+    @Autowired
+    public void setRepository(Repository repository) {
+        this.repository = repository;
     }
 }

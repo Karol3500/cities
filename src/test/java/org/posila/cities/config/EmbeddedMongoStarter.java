@@ -14,13 +14,13 @@ import java.io.IOException;
 public class EmbeddedMongoStarter {
 
     private static final String TEST_MONGO_HOST = "localhost";
+    private static final int TEST_MONGO_PORT = 12556;
 
     private static MongodStarter starter;
 
     public static void startMongo() throws IOException {
 
         if (starter != null) {
-            int port = Network.getFreeServerPort();
 
             Command command = Command.MongoD;
             IDownloadConfig downloadConfig = new DownloadConfigBuilder()
@@ -37,7 +37,7 @@ public class EmbeddedMongoStarter {
 
             IMongodConfig mongodConfig = new MongodConfigBuilder()
                     .version(Version.Main.PRODUCTION)
-                    .net(new Net(TEST_MONGO_HOST, port, Network.localhostIsIPv6()))
+                    .net(new Net(TEST_MONGO_HOST, TEST_MONGO_PORT, Network.localhostIsIPv6()))
                     .build();
 
             MongodExecutable mongodExecutable = null;
