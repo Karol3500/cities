@@ -3,7 +3,7 @@ package org.posila.cities.cities;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.posila.cities.setup.EmbeddedMongoStarter;
+import org.posila.cities.config.EmbeddedMongoStarter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;

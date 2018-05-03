@@ -1,4 +1,4 @@
-package org.posila.cities.setup;
+package org.posila.cities.config;
 
 import de.flapdoodle.embed.mongo.Command;
 import de.flapdoodle.embed.mongo.MongodExecutable;
