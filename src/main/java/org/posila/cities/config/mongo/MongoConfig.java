@@ -1,7 +1,7 @@
 package org.posila.cities.config.mongo;
 
-import org.posila.cities.cities.lifecycleevents.ContinentCascadeSaveLifecycleEvent;
-import org.posila.cities.cities.lifecycleevents.CountryCascadeSaveLifecycleEvent;
+import org.posila.cities.cities.lifecycleevents.ContinentCascadeLifecycleEvent;
+import org.posila.cities.cities.lifecycleevents.CountryCascadeLifecycleEvent;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -9,12 +9,12 @@ import org.springframework.context.annotation.Configuration;
 public class MongoConfig {
 
     @Bean
-    public CountryCascadeSaveLifecycleEvent userCascadingCountryMongoEventListener() {
-        return new CountryCascadeSaveLifecycleEvent();
+    public CountryCascadeLifecycleEvent userCascadingCountryMongoEventListener() {
+        return new CountryCascadeLifecycleEvent();
     }
 
     @Bean
-    public ContinentCascadeSaveLifecycleEvent userCascadingContinentMongoEventListener() {
-        return new ContinentCascadeSaveLifecycleEvent();
+    public ContinentCascadeLifecycleEvent userCascadingContinentMongoEventListener() {
+        return new ContinentCascadeLifecycleEvent();
     }
 }

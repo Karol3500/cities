@@ -74,4 +74,8 @@ public class Country implements Serializable {
         sb.append('}');
         return sb.toString();
     }
+
+    public String getId() {
+        return id;
+    }
 }

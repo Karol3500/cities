@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
@@ -17,12 +18,20 @@ public class CityDAO {
         cityRepository.saveAll(cities);
     }
 
+    public Collection<City> findAll() {
+        return cityRepository.findAll();
+    }
+
     public void deleteAll() {
         cityRepository.deleteAll();
     }
 
     public void save(City city) {
         cityRepository.save(city);
+    }
+
+    public void deleteAll(List<City> cities) {
+        cityRepository.deleteAll(cities);
     }
 
     public void deleteAll(String[] names) {

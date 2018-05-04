@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.mapping.event.AbstractMongoEventListener;
 import org.springframework.data.mongodb.core.mapping.event.BeforeConvertEvent;
 
-public class ContinentCascadeSaveLifecycleEvent extends AbstractMongoEventListener<Continent> {
+public class ContinentCascadeLifecycleEvent extends AbstractMongoEventListener<Continent> {
     @Autowired
     private CountryDAO dao;
 
