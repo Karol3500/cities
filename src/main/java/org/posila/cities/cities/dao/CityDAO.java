@@ -5,7 +5,10 @@ import org.posila.cities.cities.entities.Country;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.stream.Collectors;
 
 @Component
 public class CityDAO {
@@ -32,6 +35,15 @@ public class CityDAO {
             countryDAO.save(c);
         });
         cityRepository.deleteAll(cities);
+    }
+
+    public void deleteAllFromCountry(String countryName, String[] cityNames) {
+        Country country = countryDAO.findByNameOrThrowException(countryName);
+        cityRepository.deleteAll(
+                cityRepository.findAllByNameIn(cityNames).stream()
+                        .filter(city -> country.getCities().remove(city))
+                        .collect(Collectors.toList()));
+        countryDAO.save(country);
     }
 
     @Autowired

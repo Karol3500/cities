@@ -48,7 +48,11 @@ public class CitiesController {
 
     @RequestMapping(value = "/cities", method = RequestMethod.DELETE)
     public void deleteCities(@RequestParam(required = false) String countryName, @RequestParam  String[] cityNames) {
-        cityDAO.deleteAll(cityNames);
+        if(countryName == null) {
+            cityDAO.deleteAll(cityNames);
+        } else {
+            cityDAO.deleteAllFromCountry(countryName, cityNames);
+        }
     }
 
     @Autowired

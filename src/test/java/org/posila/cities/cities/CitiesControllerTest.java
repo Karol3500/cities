@@ -2,7 +2,6 @@ package org.posila.cities.cities;
 
 import org.junit.After;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.posila.cities.cities.dao.CityDAO;
@@ -22,7 +21,6 @@ import org.springframework.test.web.servlet.RequestBuilder;
 
 import java.io.IOException;
 import java.util.Collection;
-import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -181,6 +179,25 @@ public class CitiesControllerTest {
         assertThat(all).containsExactlyInAnyOrder(
                 new Continent("North America")
                         .withCountry(new Country("Fictional"))
+                        .withCountry(new Country("Canada").withCity(new City("Calgary"))));
+
+    }
+
+    @Test
+    public void shouldDeleteOnlyCitiesFromGivenCountry_ifCountryNameProvided() throws Exception {
+        continentDAO.save(new Continent("North America")
+                .withCountry(new Country("Canada").withCity(new City("Toronto")).withCity(new City("Calgary")))
+                .withCountry(new Country("Fictional").withCity(new City("Toronto"))));
+        RequestBuilder requestBuilder = delete("/cities/cities").contentType(MediaType.TEXT_PLAIN)
+                .param("countryName", "Canada")
+                .param("cityNames", "Toronto");
+
+        mockMvc.perform(requestBuilder).andReturn();
+
+        Collection<Continent> all = continentDAO.findAll();
+        assertThat(all).containsExactlyInAnyOrder(
+                new Continent("North America")
+                        .withCountry(new Country("Fictional").withCity(new City("Toronto")))
                         .withCountry(new Country("Canada").withCity(new City("Calgary"))));
 
     }
