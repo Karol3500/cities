@@ -22,7 +22,7 @@ public class CountryControllerTest extends ControllerTestSetup {
 
         Collection<Continent> all = continentDAO.findAll();
 
-        assertThat(all).containsOnly(new Continent("North America")
+        assertThat(all).containsExactly(new Continent("North America")
                 .withCountry(new Country("Canada")));
     }
 
@@ -35,7 +35,7 @@ public class CountryControllerTest extends ControllerTestSetup {
 
         Collection<Continent> all = continentDAO.findAll();
 
-        assertThat(all).containsOnly(new Continent("North America")
+        assertThat(all).containsExactly(new Continent("North America")
                 .withCountry(new Country("USA"))
                 .withCountry(new Country("Canada")));
     }
@@ -50,26 +50,50 @@ public class CountryControllerTest extends ControllerTestSetup {
 
         Collection<Continent> all = continentDAO.findAll();
 
-        assertThat(all).containsOnly(new Continent("North America")
+        assertThat(all).containsExactly(new Continent("North America")
                 .withCountry(new Country("USA"))
                 .withCountry(new Country("Canada")));
     }
 
     @Test
-    public void shouldRemoveCountry_withCities() throws Exception {
+    public void shouldAddCountry_existingInAnotherContinent() throws Exception {
+        continentDAO.save(new Continent("North America")
+                .withCountry(new Country("Canada")).withCountry(new Country("USA")));
+        continentDAO.save(new Continent("Europe")
+                .withCountry(new Country("Finland")));
+        mockMvc.perform(post("/countries/country").contentType(MediaType.TEXT_PLAIN)
+                .param("continentName", "Europe")
+                .param("countryName", "Canada"));
+
+        Collection<Continent> all = continentDAO.findAll();
+
+        assertThat(all).containsExactlyInAnyOrder(
+                new Continent("North America")
+                        .withCountry(new Country("USA"))
+                        .withCountry(new Country("Canada")),
+                new Continent("Europe")
+                        .withCountry(new Country("Finland"))
+                        .withCountry(new Country("Canada")));
+    }
+
+    @Test
+    public void shouldCascadeRemoveCountry_fromAllContinents_ifNoContinentProvided() throws Exception {
         continentDAO.save(new Continent("North America")
                 .withCountry(new Country("Canada").withCity(new City("Toronto")))
-                .withCountry(new Country("USA")
-                        .withCity(new City("Washington"))
-                        .withCity(new City("Los Angeles"))));
+                .withCountry(new Country("USA").withCity(new City("New York"))));
+        continentDAO.save(new Continent("Europe")
+                .withCountry(new Country("Finland"))
+                .withCountry(new Country("Canada").withCity(new City("Fake city"))));
 
         mockMvc.perform(delete("/countries/country").contentType(MediaType.TEXT_PLAIN)
-                .param("countryName", "USA"));
+                .param("countryName", "Canada"));
 
-        assertThat(continentDAO.findAll()).containsOnly(
+        assertThat(continentDAO.findAll()).containsExactlyInAnyOrder(
                 new Continent("North America").withCountry(
-                        new Country("Canada").withCity(new City("Toronto")))
-        );
-        assertThat(cityDAO.findAll()).containsExactly(new City("Toronto"));
+                        new Country("USA").withCity(new City("New York"))),
+                new Continent("Europe").withCountry(new Country("Finland")));
+        assertThat(cityDAO.findAll()).containsExactly(new City("New York"));
+        assertThat(countryDAO.findAll()).containsExactlyInAnyOrder(
+                new Country("USA").withCity(new City("New York")), new Country("Finland"));
     }
 }

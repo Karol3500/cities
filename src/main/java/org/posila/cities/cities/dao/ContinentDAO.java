@@ -15,7 +15,7 @@ public class ContinentDAO {
     private ContinentRepository continentRepository;
 
     public Optional<Continent> findByName(String continentName) {
-        return Optional.of(continentRepository.findByName(continentName));
+        return Optional.ofNullable(continentRepository.findByName(continentName));
     }
 
     public Collection<Continent> findAll() {

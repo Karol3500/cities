@@ -20,6 +20,10 @@ public class ContinentController {
 
     @RequestMapping(value = "/continent", method = RequestMethod.POST)
     public void addContinent(@RequestParam String continentName) {
+        Optional<Continent> continent = continentDAO.findByName(continentName);
+        if(continent.isPresent()){
+            return;
+        }
         continentDAO.save(new Continent(continentName));
     }
 
@@ -34,6 +38,10 @@ public class ContinentController {
         continentDAO.delete(c);
     }
 
+    @RequestMapping(value = "/continent", method = RequestMethod.GET, produces = "application/json")
+    public Continent findContinent(@RequestParam String continentName) {
+        return continentDAO.findByName(continentName).orElse(null);
+    }
 
     @Autowired
     public void setContinentDAO(ContinentDAO continentDAO) {

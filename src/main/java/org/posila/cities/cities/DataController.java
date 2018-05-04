@@ -20,7 +20,7 @@ public class DataController {
     @RequestMapping(value = "/all", method = RequestMethod.GET,
             produces = "application/json")
     public String printAll() throws JsonProcessingException {
-        return new ObjectMapper().writeValueAsString(new ContinentsWrapper(continentDAO.findAll()));
+        return new ContinentsWrapper(continentDAO.findAll()).asJson();
     }
 
     @RequestMapping(value = "/all", method = RequestMethod.DELETE)

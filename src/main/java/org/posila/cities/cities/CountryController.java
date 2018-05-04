@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Optional;
+import java.util.Collection;
 
 @RestController
 @RequestMapping("/countries")
@@ -29,11 +29,11 @@ public class CountryController {
 
     @RequestMapping(value = "/country", method = RequestMethod.DELETE)
     public void deleteCountry(@RequestParam String countryName) {
-        Optional<Country> optionalCountry = countryDAO.findByName(countryName);
-        if(!optionalCountry.isPresent()){
+        Collection<Country> countries = countryDAO.findByName(countryName);
+        if(countries.isEmpty()){
             return;
         }
-        countryDAO.cascadeDelete(optionalCountry.get());
+        countryDAO.cascadeDelete(countries);
     }
 
     @Autowired

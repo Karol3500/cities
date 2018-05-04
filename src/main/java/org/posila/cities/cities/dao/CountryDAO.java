@@ -1,15 +1,13 @@
 package org.posila.cities.cities.dao;
 
+import org.bson.types.ObjectId;
 import org.posila.cities.cities.entities.City;
 import org.posila.cities.cities.entities.Continent;
 import org.posila.cities.cities.entities.Country;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.bson.types.ObjectId;
 
 import java.util.Collection;
-import java.util.NoSuchElementException;
-import java.util.Optional;
 
 @Component
 public class CountryDAO {
@@ -22,16 +20,8 @@ public class CountryDAO {
         return countryRepository.findAll();
     }
 
-    public Country findByNameOrThrowException(String countryName) {
-        Country country = countryRepository.findByName(countryName);
-        if (country == null) {
-            throw new NoSuchElementException(String.format("Couldn't find country %s", countryName));
-        }
-        return country;
-    }
-
-    public Optional<Country> findByName(String countryName) {
-        return Optional.of(countryRepository.findByName(countryName));
+    public Collection<Country> findByName(String countryName) {
+        return countryRepository.findByName(countryName);
     }
 
     public Country findByCity(City city) {
@@ -40,12 +30,6 @@ public class CountryDAO {
 
     public void save(Country country) {
         countryRepository.save(country);
-    }
-
-    public void cascadeDelete(Country c) {
-        removeFromParentContinent(c);
-        cityDAO.deleteAll(c.getCities());
-        countryRepository.delete(c);
     }
 
     private void removeFromParentContinent(Country c) {
@@ -57,6 +41,12 @@ public class CountryDAO {
     public void cascadeDelete(Collection<Country> countries) {
         countries.forEach(this::cascadeDelete);
 
+    }
+
+    private void cascadeDelete(Country c) {
+        removeFromParentContinent(c);
+        cityDAO.deleteAll(c.getCities());
+        countryRepository.delete(c);
     }
 
     public void deleteAll() {
