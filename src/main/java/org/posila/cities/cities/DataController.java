@@ -12,11 +12,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/data")
 public class DataController {
-
+    
     private ContinentDAO continentDAO;
     private CountryDAO countryDAO;
     private CityDAO cityDAO;
-
 
     @RequestMapping(value = "/all", method = RequestMethod.GET,
             produces = "application/json")
