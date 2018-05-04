@@ -47,7 +47,7 @@ public class DataControllerTest {
         cityDAO.save(toronto);
         Country canada = new Country("Canada");
         countryDAO.save(canada);
-        continentDAO.save(new Continent("North America").updateCountry(canada.withCity(toronto)));
+        continentDAO.save(new Continent("North America").withCountry(canada.withCity(toronto)));
 
         mockMvc.perform(delete("/data/deleteAll").accept(MediaType.APPLICATION_JSON)).andReturn();
 

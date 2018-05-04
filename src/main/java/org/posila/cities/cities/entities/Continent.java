@@ -52,7 +52,7 @@ public class Continent implements Serializable {
         return Objects.hash(name, countries);
     }
 
-    public Continent updateCountry(Country country) {
+    public Continent withCountry(Country country) {
         countries.remove(country);
         countries.add(country);
         return this;
@@ -69,7 +69,7 @@ public class Continent implements Serializable {
         }
     }
 
-    private Optional<Country> findCountry(String countryName) {
+    public Optional<Country> findCountry(String countryName) {
         return countries.stream().filter(c -> c.getName().equals(countryName)).findAny();
     }
 

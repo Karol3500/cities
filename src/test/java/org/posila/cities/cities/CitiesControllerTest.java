@@ -56,7 +56,18 @@ public class CitiesControllerTest {
     }
 
     @Test
-    public void shouldAddContinent() throws Exception {
+    public void shouldAddContinentIfDoesntExist() throws Exception {
+        mockMvc.perform(post("/cities/addContinent").contentType(MediaType.TEXT_PLAIN)
+                .param("continentName", "North America"));
+
+        Collection<Continent> all = continentDAO.findAll();
+
+        assertThat(all).containsOnly(new Continent("North America"));
+    }
+
+    @Test
+    public void shouldNotAddExistingContinent() throws Exception {
+        continentDAO.save(new Continent("North America"));
         mockMvc.perform(post("/cities/addContinent").contentType(MediaType.TEXT_PLAIN)
                 .param("continentName", "North America"));
 
@@ -74,12 +85,41 @@ public class CitiesControllerTest {
         Collection<Continent> all = continentDAO.findAll();
 
         assertThat(all).containsOnly(new Continent("North America")
-                .updateCountry(new Country("Canada")));
+                .withCountry(new Country("Canada")));
+    }
+
+    @Test
+    public void shouldAddCountryToExistingContinent() throws Exception {
+        continentDAO.save(new Continent("North America").withCountry(new Country("USA")));
+        mockMvc.perform(post("/cities/addCountry").contentType(MediaType.TEXT_PLAIN)
+                .param("continentName", "North America")
+                .param("countryName", "Canada"));
+
+        Collection<Continent> all = continentDAO.findAll();
+
+        assertThat(all).containsOnly(new Continent("North America")
+                .withCountry(new Country("USA"))
+                .withCountry(new Country("Canada")));
+    }
+
+    @Test
+    public void shouldNotAddExistingCountry() throws Exception {
+        continentDAO.save(new Continent("North America")
+                        .withCountry(new Country("Canada")).withCountry(new Country("USA")));
+        mockMvc.perform(post("/cities/addCountry").contentType(MediaType.TEXT_PLAIN)
+                .param("continentName", "North America")
+                .param("countryName", "Canada"));
+
+        Collection<Continent> all = continentDAO.findAll();
+
+        assertThat(all).containsOnly(new Continent("North America")
+                .withCountry(new Country("USA"))
+                .withCountry(new Country("Canada")));
     }
 
     @Test
     public void shouldAddCitiesToCountry() throws Exception {
-        continentDAO.save(new Continent("North America").updateCountry(new Country("Canada")));
+        continentDAO.save(new Continent("North America").withCountry(new Country("Canada")));
         mockMvc.perform(post("/cities/addCities").contentType(MediaType.TEXT_PLAIN)
                 .param("countryName", "Canada")
                 .param("cityNames", "Toronto")
@@ -88,7 +128,7 @@ public class CitiesControllerTest {
         Collection<Continent> all = continentDAO.findAll();
 
         assertThat(all).containsOnly(new Continent("North America")
-                .updateCountry(new Country("Canada")
+                .withCountry(new Country("Canada")
                         .withCity(new City("Toronto"))
                         .withCity(new City("Calgary"))));
     }
@@ -104,7 +144,7 @@ public class CitiesControllerTest {
         Collection<Continent> all = continentDAO.findAll();
 
         assertThat(all).containsOnly(new Continent("North America")
-                .updateCountry(new Country("Canada")
+                .withCountry(new Country("Canada")
                         .withCity(new City("Toronto"))
                         .withCity(new City("Calgary"))));
     }
@@ -121,14 +161,14 @@ public class CitiesControllerTest {
         Collection<Continent> all = continentDAO.findAll();
 
         assertThat(all).containsOnly(new Continent("North America")
-                .updateCountry(new Country("Canada")
+                .withCountry(new Country("Canada")
                         .withCity(new City("Toronto"))
                         .withCity(new City("Calgary"))));
     }
 
     @Test
     public void shouldGetAllProperly() throws Exception {
-        continentDAO.save(new Continent("North America").updateCountry(new Country("Canada").withCity(new City("Toronto"))));
+        continentDAO.save(new Continent("North America").withCountry(new Country("Canada").withCity(new City("Toronto"))));
         RequestBuilder requestBuilder = get("/cities/getAll").accept(MediaType.APPLICATION_JSON);
 
         MvcResult result = mockMvc.perform(requestBuilder).andReturn();

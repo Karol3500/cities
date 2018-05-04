@@ -34,7 +34,10 @@ public class CitiesController {
 
     @RequestMapping(value = "/addCountry", method = RequestMethod.POST)
     public void addCountry(String continentName, String countryName) {
-        continentDAO.save(new Continent(continentName).updateCountry(new Country(countryName)));
+        Continent continent = continentDAO.getExistingOrNewContinent(continentName);
+        if(!continent.findCountry(countryName).isPresent()) {
+            continentDAO.save(continent.withCountry(new Country(countryName)));
+        }
     }
 
     @RequestMapping(value = "/addCities", method = RequestMethod.POST)
