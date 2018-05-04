@@ -16,5 +16,3 @@ services:
     container_name: cities_db
     expose:
       - 27017
-    volumes:
-      - ./db/:/data/db/
