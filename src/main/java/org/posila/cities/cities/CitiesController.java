@@ -1,11 +1,9 @@
 package org.posila.cities.cities;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.posila.cities.cities.dao.CityDAO;
 import org.posila.cities.cities.dao.ContinentDAO;
 import org.posila.cities.cities.dao.CountryDAO;
 import org.posila.cities.cities.entities.Continent;
-import org.posila.cities.cities.entities.ContinentsWrapper;
 import org.posila.cities.cities.entities.Country;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,37 +18,37 @@ public class CitiesController {
 
     private CountryDAO countryDAO;
     private ContinentDAO continentDAO;
-
-    @RequestMapping(value = "/getAll", method = RequestMethod.GET,
-            produces = "application/json")
-    public String printAll() throws JsonProcessingException {
-        return new ObjectMapper().writeValueAsString(new ContinentsWrapper(continentDAO.findAll()));
-    }
+    private CityDAO cityDAO;
 
     @RequestMapping(value = "/addContinent", method = RequestMethod.POST)
-    public void addContinent(String continentName) {
+    public void addContinent(@RequestParam String continentName) {
         continentDAO.save(new Continent(continentName));
     }
 
     @RequestMapping(value = "/addCountry", method = RequestMethod.POST)
-    public void addCountry(String continentName, String countryName) {
+    public void addCountry(@RequestParam String continentName, @RequestParam String countryName) {
         Continent continent = continentDAO.getExistingOrNewContinent(continentName);
         if(!continent.findCountry(countryName).isPresent()) {
             continentDAO.save(continent.withCountry(new Country(countryName)));
         }
     }
 
-    @RequestMapping(value = "/addCities", method = RequestMethod.POST)
+    @RequestMapping(value = "/cities", method = RequestMethod.POST)
     public void addCities(@RequestParam(required = false) String continentName, @RequestParam String countryName, @RequestParam String[] cityNames) {
         if (continentName == null) {
-            Country country = countryDAO.findByNameOrThrowException(countryName);
-            country.addCities(cityNames);
-            countryDAO.save(country);
+            countryDAO.save(countryDAO.findByNameOrThrowException(countryName)
+                    .addCities(cityNames)
+            );
         } else {
             Continent continent = continentDAO.getExistingOrNewContinent(continentName);
             continent.findCountryOrCreateNew(countryName).addCities(cityNames);
             continentDAO.save(continent);
         }
+    }
+
+    @RequestMapping(value = "/cities", method = RequestMethod.DELETE)
+    public void deleteCities(@RequestParam(required = false) String countryName, @RequestParam  String[] cityNames) {
+        cityDAO.deleteAll(cityNames);
     }
 
     @Autowired
@@ -61,5 +59,10 @@ public class CitiesController {
     @Autowired
     public void setCountryDAO(CountryDAO countryDAO) {
         this.countryDAO = countryDAO;
+    }
+
+    @Autowired
+    public void setCityDAO(CityDAO cityDAO) {
+        this.cityDAO = cityDAO;
     }
 }

@@ -2,6 +2,7 @@ package org.posila.cities.cities;
 
 import org.junit.After;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.posila.cities.cities.dao.CityDAO;
@@ -17,14 +18,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.RequestBuilder;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 @RunWith(SpringRunner.class)
@@ -105,7 +106,7 @@ public class CitiesControllerTest {
     @Test
     public void shouldNotAddExistingCountry() throws Exception {
         continentDAO.save(new Continent("North America")
-                        .withCountry(new Country("Canada")).withCountry(new Country("USA")));
+                .withCountry(new Country("Canada")).withCountry(new Country("USA")));
         mockMvc.perform(post("/cities/addCountry").contentType(MediaType.TEXT_PLAIN)
                 .param("continentName", "North America")
                 .param("countryName", "Canada"));
@@ -120,7 +121,7 @@ public class CitiesControllerTest {
     @Test
     public void shouldAddCitiesToCountry() throws Exception {
         continentDAO.save(new Continent("North America").withCountry(new Country("Canada")));
-        mockMvc.perform(post("/cities/addCities").contentType(MediaType.TEXT_PLAIN)
+        mockMvc.perform(post("/cities/cities").contentType(MediaType.TEXT_PLAIN)
                 .param("countryName", "Canada")
                 .param("cityNames", "Toronto")
                 .param("cityNames", "Calgary"));
@@ -135,7 +136,7 @@ public class CitiesControllerTest {
 
     @Test
     public void shouldAddCitiesToNonexistentCountryAndContinent() throws Exception {
-        mockMvc.perform(post("/cities/addCities").contentType(MediaType.TEXT_PLAIN)
+        mockMvc.perform(post("/cities/cities").contentType(MediaType.TEXT_PLAIN)
                 .param("continentName", "North America")
                 .param("countryName", "Canada")
                 .param("cityNames", "Toronto")
@@ -152,7 +153,7 @@ public class CitiesControllerTest {
     @Test
     public void shouldAddCitiesToNonexistentCountry_whenContinentExists() throws Exception {
         continentDAO.save(new Continent("North America"));
-        mockMvc.perform(post("/cities/addCities").contentType(MediaType.TEXT_PLAIN)
+        mockMvc.perform(post("/cities/cities").contentType(MediaType.TEXT_PLAIN)
                 .param("continentName", "North America")
                 .param("countryName", "Canada")
                 .param("cityNames", "Toronto")
@@ -167,13 +168,20 @@ public class CitiesControllerTest {
     }
 
     @Test
-    public void shouldGetAllProperly() throws Exception {
-        continentDAO.save(new Continent("North America").withCountry(new Country("Canada").withCity(new City("Toronto"))));
-        RequestBuilder requestBuilder = get("/cities/getAll").accept(MediaType.APPLICATION_JSON);
+    public void shouldDeleteAllCitiesWithGivenNames() throws Exception {
+        continentDAO.save(new Continent("North America")
+                .withCountry(new Country("Canada").withCity(new City("Toronto")).withCity(new City("Calgary")))
+                .withCountry(new Country("Fictional").withCity(new City("Toronto"))));
+        RequestBuilder requestBuilder = delete("/cities/cities").contentType(MediaType.TEXT_PLAIN)
+                .param("cityNames", "Toronto");
 
-        MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+        mockMvc.perform(requestBuilder).andReturn();
 
-        assertThat(result.getResponse().getContentAsString().trim())
-                .isEqualTo("{\"continents\":[{\"name\":\"North America\",\"countries\":[{\"name\":\"Canada\",\"cities\":[{\"name\":\"Toronto\"}]}]}]}");
+        Collection<Continent> all = continentDAO.findAll();
+        assertThat(all).containsExactlyInAnyOrder(
+                new Continent("North America")
+                        .withCountry(new Country("Fictional"))
+                        .withCountry(new Country("Canada").withCity(new City("Calgary"))));
+
     }
 }

@@ -12,8 +12,8 @@ import java.util.*;
 @Document
 public class Continent implements Serializable {
 
-    @Id
     @JsonIgnore
+    @Id
     String id;
 
     @JsonProperty
@@ -38,20 +38,6 @@ public class Continent implements Serializable {
         return countries;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Continent continent = (Continent) o;
-        return Objects.equals(name, continent.getName()) &&
-                Objects.equals(countries, continent.getCountries());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(name, countries);
-    }
-
     public Continent withCountry(Country country) {
         countries.remove(country);
         countries.add(country);
@@ -71,6 +57,20 @@ public class Continent implements Serializable {
 
     public Optional<Country> findCountry(String countryName) {
         return countries.stream().filter(c -> c.getName().equals(countryName)).findAny();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Continent continent = (Continent) o;
+        return Objects.equals(name, continent.getName()) &&
+                countries.containsAll(continent.getCountries());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, countries);
     }
 
     @Override

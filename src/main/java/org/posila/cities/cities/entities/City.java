@@ -28,6 +28,10 @@ public class City implements Serializable{
         return name;
     }
 
+    public String getId() {
+        return id;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
