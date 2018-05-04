@@ -25,6 +25,10 @@ public class CityDAO {
         return cityRepository.findAll();
     }
 
+    public Collection<City> findByName(String cityName) {
+        return cityRepository.findByName(cityName);
+    }
+
     public void deleteAll() {
         cityRepository.deleteAll();
     }

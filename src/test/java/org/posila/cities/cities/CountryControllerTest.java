@@ -11,12 +11,9 @@ import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
 public class CountryControllerTest extends ControllerTestSetup {
 
@@ -135,8 +132,7 @@ public class CountryControllerTest extends ControllerTestSetup {
                 .param("continentName", "North America")).andReturn();
 
         assertThat(mvcResult.getResponse().getContentAsString()).isEqualTo(
-                new ObjectMapper().writeValueAsString(new ContinentsWrapper(Collections.singletonList(
-                        new Continent("North America")
-                                .withCountry(new Country("Canada").withCity(new City("Toronto")))))));
+                new ObjectMapper().writeValueAsString(
+                        new Country("Canada").withCity(new City("Toronto"))));
     }
 }

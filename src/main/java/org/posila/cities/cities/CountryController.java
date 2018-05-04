@@ -1,6 +1,7 @@
 package org.posila.cities.cities;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.posila.cities.cities.dao.ContinentDAO;
 import org.posila.cities.cities.dao.CountryDAO;
 import org.posila.cities.cities.entities.Continent;
@@ -12,9 +13,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/countries")
@@ -42,40 +41,12 @@ public class CountryController {
 
     @RequestMapping(value = "/country", method = RequestMethod.GET)
     public String findCountry(@RequestParam(required = false) String continentName, @RequestParam String countryName) throws JsonProcessingException {
-        Collection<Continent> result = new ArrayList<>();
         if (continentName == null) {
-            result.addAll(findCountryOnAllContinents(countryName));
-        } else {
-            result.addAll(findCountryOnContinent(continentName, countryName));
+            return new ContinentsWrapper(countryDAO.findCountryOnAllContinents(countryName)).asJson();
         }
-        return new ContinentsWrapper(result).asJson();
-    }
+        return new ObjectMapper().writeValueAsString(
+                countryDAO.findCountryOnContinent(continentName, countryName).orElse(null));
 
-    private Collection<Continent> findCountryOnContinent(String continentName, String countryName) {
-        Collection<Continent> results = new ArrayList<>();
-        continentDAO.findByName(continentName)
-                .ifPresent(continent ->
-                        continent.findCountry(countryName).ifPresent(country -> results.add(
-                                prepareContinentWithtoutOtherCountries(country, continent))
-                        )
-                );
-        return results;
-    }
-
-    private Collection<Continent> findCountryOnAllContinents(String countryName) {
-        Collection<Country> countries = countryDAO.findByName(countryName);
-        Collection<Continent> results = new ArrayList<>();
-        for (Country country : countries) {
-            results.add(prepareContinentWithtoutOtherCountries(country,
-                    continentDAO.findByCountry(country)));
-        }
-        return results;
-    }
-
-    private Continent prepareContinentWithtoutOtherCountries(Country country, Continent parentContinent) {
-        Continent resultContinent = new Continent(parentContinent.getName());
-        resultContinent.getCountries().add(country);
-        return resultContinent;
     }
 
     @Autowired

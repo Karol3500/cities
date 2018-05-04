@@ -61,9 +61,8 @@ public class Country implements Serializable {
         return this;
     }
 
-    public Country addCities(String[] cityNames) {
+    public void addCities(String[] cityNames) {
         stream(cityNames).map(City::new).forEach(this::withCity);
-        return this;
     }
 
     @Override

@@ -1,8 +1,9 @@
 package org.posila.cities.cities;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.posila.cities.cities.dao.*;
+import org.posila.cities.cities.dao.CityDAO;
+import org.posila.cities.cities.dao.ContinentDAO;
+import org.posila.cities.cities.dao.CountryDAO;
 import org.posila.cities.cities.entities.ContinentsWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;

@@ -8,4 +8,6 @@ import java.util.Collection;
 interface CityRepository extends MongoRepository<City, String> {
 
     Collection<City> findAllByNameIn(String[] names);
+
+    Collection<City> findByName(String cityName);
 }

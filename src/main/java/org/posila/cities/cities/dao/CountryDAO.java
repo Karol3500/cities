@@ -7,7 +7,9 @@ import org.posila.cities.cities.entities.Country;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Optional;
 
 @Component
 public class CountryDAO {
@@ -28,6 +30,32 @@ public class CountryDAO {
         return countryRepository.findCountryByCityId(new ObjectId(city.getId()));
     }
 
+    public Optional<Country> findCountryOnContinent(String continentName, String countryName) {
+        Optional<Continent> optionalContinent = continentDAO.findByName(continentName);
+        if(optionalContinent.isPresent()){
+            Continent continent = optionalContinent.get();
+            return continent.findCountry(countryName);
+        }
+        return Optional.empty();
+    }
+
+    public Collection<Continent> findCountryOnAllContinents(String countryName) {
+        Collection<Country> countries = findByName(countryName);
+        Collection<Continent> results = new ArrayList<>();
+        for (Country country : countries) {
+            results.add(prepareContinentWithtoutOtherCountries(country,
+                    continentDAO.findByCountry(country)));
+        }
+        return results;
+    }
+
+    private Continent prepareContinentWithtoutOtherCountries(Country country, Continent parentContinent) {
+        Continent resultContinent = new Continent(parentContinent.getName());
+        resultContinent.getCountries().add(country);
+        return resultContinent;
+    }
+
+
     public void save(Country country) {
         countryRepository.save(country);
     }
@@ -40,7 +68,6 @@ public class CountryDAO {
 
     public void cascadeDelete(Collection<Country> countries) {
         countries.forEach(this::cascadeDelete);
-
     }
 
     private void cascadeDelete(Country c) {
